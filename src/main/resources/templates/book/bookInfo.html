@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit"/>
+<link rel="stylesheet" href="css/pintuer.css"/>
+<link rel="stylesheet" href="css/admin.css"/>
+<script src="js/jquery.js"></script>
+<script src="js/pintuer.js"></script>
+<title>详情</title>
+</head>
+<body>
+<div class="panel admin-panel">
+	<div class="panel-head">
+    	<strong class="icon-reorder"> 图书详情</strong> 
+    		<a th:href="@{change?bid=} + ${bookInfos.id}" style="float:right;color:green;">基本信息编辑</a> 
+    </div>
+    <div class="padding border-bottom">
+    
+    	<div class="panel-head" style="text-align: center;">
+    		<img width="200" src="images/book/default.jpg" th:src="@{images/book/}+${bookInfos.cover}"  class="radius-rounded rotate-hover" />
+    	</div>
+    
+    	<div class="panel-head">
+    		<strong> 书名：</strong><span th:text="${bookInfos.name}"> 未设置</span>
+    	</div>
+    	<div class="panel-head">
+    		<strong> 作者：</strong><span th:text="${bookInfos.writer.name}"> 刘慈欣</span>
+    	</div>
+    	<div class="panel-head">
+    		<strong> 出版社：</strong><span th:text="${bookInfos.publish.name}"> 重庆出版社</span>
+    	</div>
+    	<!-- <div class="panel-head">
+    		<strong> 语言：</strong><span> 中文</span>
+    	</div> -->
+    	<div class="panel-head">
+    		<strong> 价格：</strong><span style="color:red;"> ￥</span><span th:text="${bookInfos.price}">未设置</span>
+    	</div>
+    	<div class="panel-head">
+    		<strong> 概述：</strong><span th:text="${bookInfos.summary}"> 未设置</span>
+    	</div>
+    	<div class="panel-head">
+    		<strong> 读者人数：</strong><span th:text="${bookInfos.readers}"> 未设置</span>
+    	</div>
+    	<div class="panel-head">
+    		<strong> 评论数：</strong><span th:text="${bookInfos.comments}"> 未设置</span>
+    	</div>
+    	<div class="panel-head">
+    		<strong> 类型：</strong><span th:text="${bookInfos.type.clazz.name}"> 未设置</span> - <span th:text="${bookInfos.type.name}">未设置</span>
+    	</div>
+    	<!-- <div class="panel-head">
+    		<strong> 推荐人数：</strong><span> 1000</span>
+    	</div> -->
+    	<div class="panel-head">
+    		<strong> 版权期限：</strong><span th:text="${#dates.format(bookInfos.payaway,'yyyy-MM-dd')}"> 未设置</span> 至 <span th:text="${#dates.format(bookInfos.soldout,'yyyy-MM-dd')}"> 未设置</span>
+    	</div>
+    	<div class="panel-head">
+    		<strong> 试读章节：</strong><span th:text="${bookInfos.limit}"> 未设置</span>
+    	</div>
+    	<div class="panel-head">
+    		<strong> 销量：</strong><span  th:text="${bookInfos.sales}"> 未设置</span>
+    	</div>
+    	<div class="panel-head">
+    		<strong> 搜索次数：</strong><span th:text="${bookInfos.searchs}"> 未设置</span>
+    	</div>
+    	<div class="panel-head">
+    		<a th:href="@{change?bid=} + ${bookInfos.id}" class="button border-green icon-wrench" style="padding:5px 15px;" > 基本信息编辑 </a>&nbsp; &nbsp; 
+    		<a th:href="@{text?bid=} + ${bookInfos.id}" class="button border-green icon-wrench" style="padding:5px 15px;" > 添加正文</a> &nbsp; &nbsp; 
+    		<a th:href="@{changetext?bid=} + ${bookInfos.id}" class="button border-green icon-wrench" style="padding:5px 15px;" > 修改正文</a> 
+    	</div>
+    </div>
+</div>
+</body>
+</html>

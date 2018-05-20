@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit"/>
+<title></title>
+<link rel="stylesheet" href="css/pintuer.css"/>
+<link rel="stylesheet" href="css/admin.css"/>
+<script src="js/jquery.js"></script>
+<script src="js/pintuer.js"></script>
+</head>
+<body>
+<form method="post" action="" id="listform">
+  <div class="panel admin-panel">
+    <div class="panel-head">
+    	<strong class="icon-reorder"> 内容列表</strong> 
+    	<!-- <a href="" style="float:right;font-weight: bolder;">添加字段</a> -->
+    </div>
+    <div class="padding border-bottom">
+      <ul class="search" style="padding-left:10px;">
+        
+        <!-- <li style="color:red;font-size:14px;font-weight: bold;">搜索：</li> -->
+        <li><span style="color:red;font-weight: bold;">搜索方式: </span>
+          <select id="type" name="s_ishome" class="input" onchange="changesearch()" style="width:60px; line-height:17px; display:inline-block">
+            <option value="0">ID</option>
+            <option value="1">书名</option>
+            <!-- <option value="3">类型</option>
+            <option value="4">作者</option>
+            <option value="5">出版社</option> -->
+          </select>
+          &nbsp;&nbsp;
+         <!-- <span style="color:red;font-weight: bold;">类型: </span>
+          <select name="s_isvouch" class="input" onchange="changesearch()"  style="width:60px; line-height:17px;display:inline-block">
+            <option value="0">默认</option>
+            <option value="1">小说</option>
+            <option value="2">历史</option>
+          </select> -->
+          &nbsp;&nbsp;
+          <!-- <span style="color:red;font-weight: bold;">细分: </span> 
+          <select name="s_istop" class="input" onchange="changesearch()"  style="width:60px; line-height:17px;display:inline-block">
+            <option value="">默认</option>
+            <option value="0">科幻</option>
+            <option value="1">推理</option>
+          </select> -->
+        </li>
+          <!-- <li>
+            <select name="cid" class="input" style="width:200px; line-height:17px;" onchange="changesearch()">
+              <option value="">请选择分类</option>
+              <option value="">产品分类</option>
+              <option value="">产品分类</option>
+              <option value="">产品分类</option>
+              <option value="">产品分类</option>
+            </select>
+          </li> -->
+          
+          
+        <li>
+          <input id="info" type="text" placeholder="请输入搜索关键字" name="keywords" class="input" style="width:250px; line-height:17px;display:inline-block" />
+          <a href="javascript:void(0)" class="button border-main icon-search" onclick="searchBook()"> 搜索</a></li>
+          
+          <li style="float:right;"> <a class="button border-main icon-plus-square-o" href="add.html" > 添加内容</a> </li>
+      </ul>
+    </div>
+    
+    <script type="text/javascript">
+   function searchBook(){
+    	var t = $("#type").val();
+    	var i = $("#info").val();
+    	$.post("search/books",{type:t,info:i},function(date){
+    		//showBooks(date);
+    		showBooks(date);
+    	});
+    }
+   function showBooks(date){
+	   var htmlcode = "<tr><th width='5%'>ID</th><th width='10%'>书名</th><th width='10%'>封面</th><th width='10%'>作者</th><th width='15%'>出版社</th><th width='5%'>价格</th><th width='35%'>操作</th></tr>"
+	   var len = date.length;
+	   for(var i = 0;i<len;i++){
+		   htmlcode = htmlcode + "<tr><td style='text-align:left; padding-left:20px;'>"+date[i].id+"</td>"+
+		   "<td>"+date[i].name+"</td><td width='10%'><img width='70' height='50' src='images/book/"+date[i].cover+"' /></td><td>"+date[i].writer.name+"</td><td>"+date[i].publish.name+"</td>"+
+		   "<td><font color='red' >￥ </font><font>"+date[i].price+"</font> </td><td><div class='button-group'>"+
+		   "<a class='button border-green' href='bookInfo?bid="+date[i].id+"'><span class='icon-info'></span> 详情</a>"+
+				   "<a class='button border-main'  href='change?bid="+date[i].id+"'><span class='icon-edit'></span> 基本信息修改</a>"+
+						   "<a class='button border-main'  href='text?bid="+date[i].id+"'><span class='icon-edit'></span> 正文修改</a>"+
+								   "<a class='button border-main' href='changetext?bid="+date[i].id+"'><span class='icon-edit'></span> 修改正文</a></div></td>";
+	   }
+	   htmlcode = htmlcode+"</tr>";
+	   $("#books").html(htmlcode);
+	   //alert(htmlcode);
+   }
+   
+    </script>
+    
+    
+    
+    <table id="books" class="table table-hover text-center">
+    
+      <tr>
+        <th width="5%">ID</th>
+        <th width="10%">书名</th>
+        <th width="10%">封面</th>
+        <th width="10%">作者</th>
+        <th width="15%">出版社</th>
+        <th width="5%">价格</th>
+        <th width="35%">操作</th>
+      </tr>
+      <!-- <volist name="list" id="vo"> -->
+        <tr th:each="book:${list}">
+          <td style="text-align:left; padding-left:20px;"th:text="${book.id}">
+          <!-- <input type="checkbox" name="id[]" th:text="${book.id}"/> -->
+           </td>
+          <td th:text="${book.name}">未设置</td>
+          <td width="10%"><img th:src="@{images/book/}+${book.cover}"  width="70" height="50" /></td>
+          <td th:text="${book.writer.name}">未设置</td>
+          <td th:text="${book.publish.name}">未设置</td>
+          <td><font color="red" >￥ </font><font th:text="${book.price}">未设置</font> </td>
+          <td>
+          	<div class="button-group">
+          	 <a class="button border-green" href="bookInfo" th:href="@{bookInfo?bid=}+${book.id}">
+          	 <span class="icon-info"></span> 详情</a>
+          	 <a class="button border-main"  th:href="@{change?bid=}+${book.id}">
+          	 	<span class="icon-edit"></span> 基本信息修改</a>
+          	 <a class="button border-main"  th:href="@{text?bid=}+${book.id}">
+          	 	<span class="icon-edit"></span> 添加正文</a>
+          	 <a class="button border-main"  th:href="@{changetext?bid=}+${book.id}">
+          	 	<span class="icon-edit"></span> 修改正文</a>
+          	 <!-- <a class="button border-red" href="javascript:void(0)" onclick="return del(1,1,1)">
+          	 <span class="icon-trash-o"></span> 删除</a> -->
+           </div>
+          </td>
+        </tr>
+<!--          <tr>
+          <td style="text-align:left; padding-left:20px;"><input type="checkbox" name="id[]" value="" />
+           1</td>
+          <td><input type="text" name="sort[1]" value="1" style="width:50px; text-align:center; border:1px solid #ddd; padding:7px 0;" /></td>
+          <td width="10%"><img src="images/11.jpg" alt="" width="70" height="50" /></td>
+          <td>这是一套MUI后台精美管理系统，感谢您的支持</td>
+          <td><font color="#00CC99">首页</font></td>
+          <td>产品分类</td>
+          <td>2016-07-01</td>
+          <td><div class="button-group"> <a class="button border-main" href="add.html"><span class="icon-edit"></span> 修改</a> <a class="button border-red" href="javascript:void(0)" onclick="return del(1,1,1)"><span class="icon-trash-o"></span> 删除</a> </div></td>
+        </tr> -->
+      <tr>
+        <!-- <td style="text-align:left; padding:19px 0;padding-left:20px;"><input type="checkbox" id="checkall"/>
+          全选 </td> -->
+        <!-- <td colspan="7" style="text-align:left;padding-left:20px;"><a href="javascript:void(0)" class="button border-red icon-trash-o" style="padding:5px 15px;" onclick="deleteBooks();"> 删除</a>  --><!-- <a href="javascript:void(0)" style="padding:5px 15px; margin:0 10px;" class="button border-blue icon-edit" onclick="sorts()"> 排序</a> 操作： -->
+          <!-- <select name="ishome" style="padding:5px 15px; border:1px solid #ddd;" onchange="changeishome(this)">
+            <option value="">首页</option>
+            <option value="1">是</option>
+            <option value="0">否</option>
+          </select> -->
+          <!-- <select name="isvouch" style="padding:5px 15px; border:1px solid #ddd;" onchange="changeisvouch(this)">
+            <option value="">推荐</option>
+            <option value="1">是</option>
+            <option value="0">否</option>
+          </select> -->
+          <!-- <select name="istop" style="padding:5px 15px; border:1px solid #ddd;" onchange="changeistop(this)">
+            <option value="">置顶</option>
+            <option value="1">是</option>
+            <option value="0">否</option>
+          </select>
+          &nbsp;&nbsp;&nbsp; -->
+          
+          <!-- 移动到：
+          <select name="movecid" style="padding:5px 15px; border:1px solid #ddd;" onchange="changecate(this)">
+            <option value="">请选择分类</option>
+            <option value="">产品分类</option>
+            <option value="">产品分类</option>
+            <option value="">产品分类</option>
+            <option value="">产品分类</option>
+          </select> -->
+          <!-- <select name="copynum" style="padding:5px 15px; border:1px solid #ddd;" onchange="changecopy(this)">
+            <option value="">请选择复制</option>
+            <option value="5">复制5条</option>
+            <option value="10">复制10条</option>
+            <option value="15">复制15条</option>
+            <option value="20">复制20条</option>
+          </select> -->
+          </td>
+      </tr>
+      <tr>
+        <td colspan="8">
+        <div class="pagelist">
+        
+         <a th:if="${!isFirstPage}" th:href="@{/bookList?p=1}">首页</a> 
+         <a th:if="${hasPreviousPage}" th:href="@{/bookList?p=} + ${pageNum-1}">上一页</a> 
+         
+         <b th:each="p : ${#numbers.sequence(pageNum,pages)}">
+         <span class="current"  th:if="${pageNum} == ${p}" th:text="${pageNum}" ></span>
+         <a th:if="${pageNum} != ${p} and ${p} le ${pages} and ${pageNum+9} ge ${p}" th:text="${p}" th:href="@{/bookList?p=} + ${p}"></a>
+         </b>
+         
+         
+         
+         <a th:if="${hasNextPage}" th:href="@{/bookList?p=} + ${pageNum + 1}">下一页</a>
+         <a th:if="${!isLastPage}" th:href="@{/bookList?p=} + ${pages}">尾页</a>
+         
+          </div></td>
+      </tr>
+      <!-- </volist> -->
+    </table>
+  </div>
+</form>
+<script type="text/javascript">
+function deleteBooks(){
+	var ids = $("input[name='id[]']").val();
+	alert("ids: "+ids[0]);
+}
+
+
+//单个删除
+function del(id,mid,iscid){
+	if(confirm("您确定要删除吗?")){
+		
+	}
+}
+
+//全选
+$("#checkall").click(function(){ 
+  $("input[name='id[]']").each(function(){
+	  if (this.checked) {
+		  this.checked = false;
+	  }
+	  else {
+		  this.checked = true;
+	  }
+  });
+})
+
+//批量删除
+function DelSelect(){
+	var Checkbox=false;
+	 $("input[name='id[]']").each(function(){
+	  if (this.checked==true) {		
+		Checkbox=true;	
+	  }
+	});
+	if (Checkbox){
+		var t=confirm("您确认要删除选中的内容吗？");
+		if (t==false) return false;		
+		$("#listform").submit();		
+	}
+	else{
+		alert("请选择您要删除的内容!");
+		return false;
+	}
+}
+
+//批量排序
+function sorts(){
+	var Checkbox=false;
+	 $("input[name='id[]']").each(function(){
+	  if (this.checked==true) {		
+		Checkbox=true;	
+	  }
+	});
+	if (Checkbox){	
+		
+		$("#listform").submit();		
+	}
+	else{
+		alert("请选择要操作的内容!");
+		return false;
+	}
+}
+
+
+//批量首页显示
+function changeishome(o){
+	var Checkbox=false;
+	 $("input[name='id[]']").each(function(){
+	  if (this.checked==true) {		
+		Checkbox=true;	
+	  }
+	});
+	if (Checkbox){
+		
+		$("#listform").submit();	
+	}
+	else{
+		alert("请选择要操作的内容!");		
+	
+		return false;
+	}
+}
+
+//批量推荐
+function changeisvouch(o){
+	var Checkbox=false;
+	 $("input[name='id[]']").each(function(){
+	  if (this.checked==true) {		
+		Checkbox=true;	
+	  }
+	});
+	if (Checkbox){
+		
+		
+		$("#listform").submit();	
+	}
+	else{
+		alert("请选择要操作的内容!");	
+		
+		return false;
+	}
+}
+
+//批量置顶
+function changeistop(o){
+	var Checkbox=false;
+	 $("input[name='id[]']").each(function(){
+	  if (this.checked==true) {		
+		Checkbox=true;	
+	  }
+	});
+	if (Checkbox){		
+		
+		$("#listform").submit();	
+	}
+	else{
+		alert("请选择要操作的内容!");		
+	
+		return false;
+	}
+}
+
+
+//批量移动
+function changecate(o){
+	var Checkbox=false;
+	 $("input[name='id[]']").each(function(){
+	  if (this.checked==true) {		
+		Checkbox=true;	
+	  }
+	});
+	if (Checkbox){		
+		
+		$("#listform").submit();		
+	}
+	else{
+		alert("请选择要操作的内容!");
+		
+		return false;
+	}
+}
+
+//批量复制
+function changecopy(o){
+	var Checkbox=false;
+	 $("input[name='id[]']").each(function(){
+	  if (this.checked==true) {		
+		Checkbox=true;	
+	  }
+	});
+	if (Checkbox){	
+		var i = 0;
+	    $("input[name='id[]']").each(function(){
+	  		if (this.checked==true) {
+				i++;
+			}		
+	    });
+		if(i>1){ 
+	    	alert("只能选择一条信息!");
+			$(o).find("option:first").prop("selected","selected");
+		}else{
+		
+			$("#listform").submit();		
+		}	
+	}
+	else{
+		alert("请选择要复制的内容!");
+		$(o).find("option:first").prop("selected","selected");
+		return false;
+	}
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit"/>
+<link rel="stylesheet" href="css/pintuer.css"/>
+<link rel="stylesheet" href="css/admin.css"/>
+<script src="js/jquery.js"></script>
+<script src="js/pintuer.js"></script>
+<title>详情</title>
+</head>
+<body>
+<div class="panel admin-panel">
+	<div class="panel-head">
+    	<strong class="icon-reorder"> 修改</strong> 
+    	<a href="addwri" style="float:right;color:green;">新添加信息</a> 
+    </div>
+    <div class="padding border-bottom">
+    
+    	<div class="panel-head" style="text-align: center;">
+    		<img width="200" src="images/writer/default.jpg"th:src="@{images/writer/}+${writer.cover}"  class="radius-rounded rotate-hover"  th:href="@{images/writer/} + ${writer.cover}"/>
+    	</div>
+    	<div class="panel-head">
+    	<div class="body-content">
+			  <form method="post" class="form-x" action="setWcover" enctype="multipart/form-data" > 
+			  	<div class="form-group">
+			        <div class="label">
+			          <label>封面：</label>
+			        </div>
+			        <div class="field">
+			          <input type="file" id="wcover" name="wcover" class="input tips" style="width:25%; float:left;"  value=""  data-toggle="hover" data-place="right" data-image="" />
+			          <input id="writerid"  name="id"type="hidden" value="" th:value="${writer.id}"/>
+			        </div>
+			      </div>
+			      <div class="form-group">
+			        <div class="label">
+			          <label></label>
+			        </div>
+			        <div class="field">
+			          <button class="button bg-main icon-check-square-o" type="submit"> 提交</button>
+			        </div>
+			      </div>
+			   </form>
+  </div>
+    	</div>
+    
+    	<div class="panel-head">
+    		<strong> 序号：</strong><span id="wid" th:text="${writer.id}" > 未设置</span>
+    	</div>
+    	<div class="panel-head">
+    		<strong> 名字：</strong><input onchange="changeBookInfos();" id="wname" type="text"  th:value="${writer.name}" />
+    	</div>
+    	<div class="panel-head">
+    		<strong> 性别：</strong><!-- <input type="text"  th:value="${writer.gender}" /> -->
+    		<select id="gen" onblur="changeBookInfos();">
+    			<option value="未知">未知</option>
+    			<option value="男">男</option>
+    			<option value="女">女</option>
+    		</select>
+    	</div>
+    	<div class="panel-head">
+    		<strong> 简介：</strong><textarea id="summ" rows="10" cols="150" th:text="${writer.summary}" onchange="changeBookInfos();"></textarea>
+    	</div>
+    	<script type="text/javascript">
+    		function changeBookInfos(){
+    			var id = $("#wid").text();
+    			var wname = $("#wname").val();
+    			var gen = $("#gen").val();
+    			var summ = $("#summ").val();
+    			if(id != null && id != "" && wname != null && wname != "" && gen != null && gen != "" && summ != null && summ != ""){
+    				$.post("chagewriter",{wid:id,name:wname,gender:gen,summary:summ},function(date){
+        				alert(date);
+        			});
+    			}
+    		}
+    	</script>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit"/>
+<title></title>
+<link rel="stylesheet" href="css/pintuer.css"/>
+<link rel="stylesheet" href="css/admin.css"/>
+<script src="js/jquery.js"></script>
+<script src="js/pintuer.js"></script>
+</head>
+<body>
+<div class="panel admin-panel">
+  <div class="panel-head" id="add"><strong><span class="icon-pencil-square-o"></span>增加新书</strong></div>
+  <div class="body-content">
+    <form method="post" class="form-x" action="">  
+      <div class="form-group">
+        <div class="label">
+          <label>书名：</label>
+        </div>
+        <div class="field">
+          <input id="title"  type="text" class="input w50" value="" name="title" placeholder="请输入书名" data-validate="required:不能为空"/>
+        </div>
+      </div>
+      <!-- <div class="form-group">
+        <div class="label">
+          <label>封面：</label>
+        </div>
+        <div class="field">
+          <input type="file" id="url1" name="img" class="input tips" style="width:25%; float:left;"  value=""  data-toggle="hover" data-place="right" data-image="" />
+          <input type="button" class="button bg-blue margin-left" id="image1" value="+ 浏览上传"  style="float:left;" />
+          <div class="tipss">图片尺寸：500*500</div>
+        </div>
+      </div>  -->
+      <script type="text/javascript">
+      
+      function showTypes(date){
+    	  var len = date.length;
+    	  
+    	  var htmlCode = "";
+    	  for(var i=0;i < len;i++){  
+    	  htmlCode = htmlCode + "<option value='"+date[i].id+"'>"+date[i].name+"</option>";
+    	  }
+    	 $("#tid").html(htmlCode);
+      }
+      
+      
+      $(document).ready(function(){
+    	  //下拉列表
+    	  $("#cid").change(function(){
+    		 // var cname = $("#cid option:selected").text();
+    		  var classId = $("#cid option:selected").val();  
+    		  var uri = "types?cid=" + classId;
+    		 $.post(uri,{cid:classId},function(date){
+    			 showTypes(date);
+    		 });
+    	  });
+    	//下拉列表
+    	  
+    	  
+      });
+      </script>    
+      
+        <div class="form-group">
+          <div class="label">
+            <label> 类型：</label>
+          </div>
+          <div class="field">
+            <select id="cid" name="cid" class="input w50" >
+              <option value="未设置"  th:each="clazz:${clazzs}" th:text="${clazz.name}" th:value="${clazz.id}"></option>
+            </select>
+            
+            <select name="tid" class="input w50" id="tid">
+              <option value="未设置"  th:each="type:${types}" th:text="${type.name}" th:value="${type.id}"></option>
+            </select>
+            
+          </div>
+        </div>
+        
+        
+        <div class="form-group">
+          <div class="label">
+            <label>作者：</label>
+          </div>
+          
+          <div class="field">
+          <select id="wid" class="input w50" >
+               <option value="未设置"  th:each="w:${writers}" th:text="${w.name}" th:value="${w.id}"></option>
+            </select>
+            <input id="opwri" type="text" class="input w50" placeholder="请输入作者名称" />
+            <span style="color:red;font-size:12px;">若无可选项，请添加新作者信息</span>
+          
+          </div>
+        </div>
+        
+        <script type="text/javascript">
+	          $("#opwri").bind("input propertychange change",function(event){
+	        	 // $("#wid").empty();
+	        	  var inf =  $("#opwri").val();
+	              $.post("optionwriters",{info:inf},function(date){
+	            	  var op = "";
+	            	  var len = date.length;
+	            	  for(i=0; i<len; i++){
+	            		 op = op +  "<option value='"+date[i].id+"'>"+date[i].name+"</option>";
+	            	  }
+	            	  $("#wid").html(op);
+	              });
+	     	 });
+          </script>
+        
+        <div class="form-group">
+          <div class="label">
+            <label>出版社：</label>
+          </div>
+          <div class="field">
+          <select id="pid"  class="input w50" >
+              <option value="未设置"  th:each="p:${publishs}" th:text="${p.name}" th:value="${p.id}"></option>
+            </select>
+            <input id="oppub" type="text" class="input w50" placeholder="请输入出版社名称" />
+            <span style="color:red;font-size:12px;">若无可选项，请添加新出版社信息</span>
+          </div>
+        </div>
+        
+        <script type="text/javascript">
+	          $("#oppub").bind("input propertychange change",function(event){
+	        	  //$("#pid").empty();
+	        	  var inf =  $("#oppub").val();
+	              $.post("optionpublishs",{info:inf},function(date){
+	            	  var op = "";
+	            	  var len = date.length;
+	            	  for(i=0; i<len; i++){
+	            		 op = op +  "<option value='"+date[i].id+"'>"+date[i].name+"</option>";
+	            	  }
+	            	  $("#pid").html(op);
+	              });
+	     	 });
+          </script>
+        
+        
+        <div class="form-group">
+          <div class="label">
+            <label>价格：</label>
+          </div>
+          <div class="field">
+          	<input id="pri" type="text" class="input w50" value="" name="title" placeholder="请输入价格" data-validate="required:不能为空" onchange="isZero();"/>
+          	<span style="color:red;font-size:12px;margin-left: 20px;">设为0时，表示可免费阅读；对应试读章数也必须为0</span>
+          </div>
+        </div>
+      <div class="form-group">
+        <div class="label">
+          <label>概述：</label>
+        </div>
+        <div class="field">
+          <textarea id="summ"  class="input" name="note" style=" height:90px;" data-validate="required:不能为空" >暂无介绍</textarea>
+          <div class="tips"></div>
+        </div>
+      </div>
+      
+       
+     
+      <div class="clear"></div>
+      
+      <div class="form-group">
+        <div class="label">
+          <label>上架时间：</label>
+        </div>
+        <div class="field"> 
+          <script src="js/laydate/laydate.js"></script>
+          <input id="pay" type="date" class="laydate-icon input w50" name="datetime" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})" value=""  data-validate="required:日期不能为空" style="padding:10px!important; height:auto!important;border:1px solid #ddd!important;" />
+          <div class="tips"></div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <div class="label">
+          <label>下架时间：</label>
+        </div>
+        <div class="field"> 
+          <script src="js/laydate/laydate.js"></script>
+          <input id="sold" type="date" class="laydate-icon input w50" name="datetime" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})" value=""  data-validate="required:日期不能为空" style="padding:10px!important; height:auto!important;border:1px solid #ddd!important;" />
+          <div class="tips"></div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+          <div class="label">
+            <label>试读章数：</label>
+          </div>
+          <div class="field">
+          	<input id="limits"  type="text" class="input w50" value="1" name="title" placeholder="请输入试读章节"  data-validate="required:不能为空"  onchange="isZero();"/>
+         	<span style="color:red;font-size:12px;margin-left: 20px;">设为0时，表示可免费阅读；对应价格也必须为0</span>
+          </div>
+        </div>
+       
+        
+            
+      <div class="form-group">
+        <div class="label">
+          <label></label>
+        </div>
+        <div class="field">
+          <button id="subinfos" class="button bg-main icon-check-square-o" type="button"> 提交</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  
+  
+  
+ <script type="text/javascript">
+ var bookId=0;
+    	$(document).ready(function(){
+    		$("#subinfos").click(function(){
+    			var title = $("#title").val();
+    			var tId = $("#tid").val();
+    			var wId = $("#wid").val();
+    			var pId = $("#pid").val();
+    			var summ = $("#summ").val();
+    			var pri = $("#pri").val();
+    			var pay = $("#pay").val();
+    			var sold = $("#sold").val();
+    			var limits = $("#limits").val();
+    			//alert("书名：" + title + "；类型：" + tId + "；作者：" + wId + "；出版社："+pId+"；简介：" +summ+ "；价格：" +pri+ "；上架时间：" +pay+ ";下架时间：" +sold+ ";试读页面：" + limits);
+    			if(title != null && title != ""  && pri != null && pri != "" && pay != null && pay != "" && sold != null && sold != "" && limits != null && limits != "" && wId != null && wId != "" && pId != null && pId != ""){
+    				if( (pri != 0 && limits != 0) || (pri == 0 && limits == 0) ){
+	    				$.post("addnewBook",{
+	        				name:title,typeId:tId,writerId:wId,publishId:pId,price:pri,summary:summ,payaway:pay,soldout:sold,limit:limits
+	        			},function(date){
+	        				$("#bid").val(date);
+	        				bookId = date;
+	        				//alert("bookId: " + bookId);
+	        				alert("请为新书设置封面");
+	        			}); 
+	        			//alert("测试成功");
+    				}else{
+    					alert("价格和试读章数不对应,无法提交");
+    				}
+    			}else{
+    				alert("信息不能为空");
+    			}
+    			
+    		});
+    	});
+    </script> 
+  <span style="color:red;font-size:12px">先提交基本信息，再上传图片，上方数据提交提交后，请在下方为图书设置封面,添加图片前,不能刷新该页面</span>
+  <hr>
+  <div class="body-content">
+  	<form method="post" class="form-x" action="setimg" enctype="multipart/form-data">
+  		<div class="form-group">
+        <div class="label">
+          <label>封面：</label>
+        </div>
+        <div class="field">
+          <input type="file" id="bookcover" name="coverImg" class="input tips" style="width:25%; float:left;"  value=""  data-toggle="hover" data-place="right" data-image="" />
+          <input id="bid" type="hidden" name="id" value="0"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="label">
+          <label></label>
+        </div>
+        <div class="field">
+          <button class="button bg-main icon-check-square-o" type="submit"> 提交</button>
+        </div>
+      </div>
+  	</form>
+  </div>
+  
+  <span style="color:red;font-size:12px">添加正文信息前，切莫刷新该页面</span>
+  <hr>
+  <div class="body-content">
+   	<ul> <li> <a id="settext" class="button border-main icon-plus-square-o" > 添加正文信息</a> </li> </ul>
+   </div>
+   <script type="text/javascript">
+   $(document).ready(function(){
+	   $("#settext").click(function(){
+		   if(bookId != 0){
+			   var uri="text?bid="+bookId;
+			   window.location.href = uri;
+		   }else{
+			   alert("非法操作！上传正文信息前请提交图书基本信息");
+		   }
+	   });
+   });
+   </script>
+  
+</div>
+
+</body></html>

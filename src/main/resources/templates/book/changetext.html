@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit"/>
+<title></title>
+<link rel="stylesheet" href="css/pintuer.css"/>
+<link rel="stylesheet" href="css/admin.css"/>
+<link rel="stylesheet" href="trumbowyg/design/css/trumbowyg.css">
+<script src="js/jquery.js"></script>
+<script src="js/pintuer.js"></script>
+</head>
+<body>
+<div class="panel admin-panel">
+  <div class="panel-head" id="add"><strong><span class="icon-pencil-square-o"></span>正文修改</strong>- ID号: <span id="bookid" style="color:red;" th:text="${bid}">ID号</span > - <span style="color:red;" th:text="${chaptername}">章节</span></div>
+  <div class="body-content">
+    <form method="post" class="form-x" action="">  
+    
+    
+        <script src="js/jquery.js"></script>
+
+        <script src="trumbowyg/trumbowyg.js"></script>
+
+        <script src="trumbowyg/langs/fr.js"></script>
+
+        <script src="trumbowyg/plugins/upload/trumbowyg.upload.js"></script>
+
+        <script src="trumbowyg/plugins/base64/trumbowyg.base64.js"></script>
+        
+        <script type="text/javascript">
+         function changeText(suc){
+    		var chap = $("#chid option:selected").val();
+    		var chapname = $("#chid option:selected").text();
+    		var newchap = $("#newchap").val();
+    		var txt = $("#simple-editor").html();
+    		var bookid = $("#bookid").text();
+    		var textid = $("#textid").val();
+    		if(txt!="" && txt != null){
+    			 $.post("chatext",{chid:chap,tid:textid,oldChapter:chapname,newChapter:newchap,text:txt,bid:bookid,success:suc},function(date){
+    				alert("已修改");
+    				window.location.href=date;
+    			}); 
+    			//alert("chap:"+chap + "; newchap: " + newchap + "; txt: "+ txt + "; bookid: " + bookid + "; textid: " + textid + "; suc: "+ suc + "; chapname: "+chapname);
+    		}else{
+    			alert("填写信息不能为空");
+    		}
+    		
+    	} 
+        </script>
+    
+    <div class="form-group">
+          <div class="label">
+            <label> 类型：</label>
+          </div>
+          <script type="text/javascript">
+          	function updateText(){
+          		var id = $('#chid option:selected').val();
+          		 $.post("getText",{chid:id},function(date){
+          			$("#simple-editor").html(date.text);
+          			$('#textid').val(date.id);
+          		}); 
+          	}
+          </script>
+          <div class="field">
+            <select id="chid" name="cid" class="input w50"  onchange="updateText();">
+              <option value="未设置" th:each="clazz:${chapters}" th:text="${clazz.name}" th:value="${clazz.id}"></option>
+            </select>
+            
+          	<input id="newchap"  type="text" class="input w50" value="" name="title" placeholder="可以在此处输入新的章节名称" />
+            <span style="color:red;font-size:12px">输入新章节名称会覆盖下拉列表内容，若不覆盖请保持空格</span>
+          </div>
+        </div>
+        
+        <input id="textid" type="hidden" th:value="${text.id}"/>
+         <div id="simple-editor" th:utext="${text.text}">
+         </div>
+        
+        
+        <script>
+
+            /** Default editor configuration **/
+
+            $('#simple-editor').trumbowyg();
+
+
+
+
+
+
+
+            /********************************************************
+
+             * Customized button pane + buttons groups + dropdowns
+
+             * Use upload plugin
+
+             *******************************************************/
+
+
+
+            /*
+
+             * Add your own groups of button
+
+             */
+
+            $.trumbowyg.btnsGrps.test = ['bold', 'link'];
+
+
+
+            /* Add new words for customs btnsDef just below */
+
+            $.extend(true, $.trumbowyg.langs, {
+
+                fr: {
+
+                    align: 'Alignement',
+
+                    image: 'Image'
+
+                }
+
+            });
+
+            $('#customized-buttonpane').trumbowyg({
+
+                lang: 'fr',
+
+                closable: true,
+
+                fixedBtnPane: true,
+
+                btnsDef: {
+
+                    // Customizables dropdowns
+
+                    align: {
+
+                        dropdown: ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
+
+                        ico: 'justifyLeft'
+
+                    },
+
+                    image: {
+
+                        dropdown: ['insertImage', 'upload', 'base64'],
+
+                        ico: 'insertImage'
+
+                    }
+
+                },
+
+                btns: ['viewHTML',
+
+                    '|', 'formatting',
+
+                    '|', 'btnGrp-test',
+
+                    '|', 'align',
+
+                    '|', 'btnGrp-lists',
+
+                    '|', 'image']
+
+            });
+
+
+
+
+
+
+
+            /** Simple customization with current options **/
+
+            $('#form-content').trumbowyg({
+
+                lang: 'fr',
+
+                closable: true,
+
+                mobile: true,
+
+                fixedBtnPane: true,
+
+                fixedFullWidth: true,
+
+                semantic: true,
+
+                resetCss: true,
+
+                autoAjustHeight: true,
+
+                autogrow: true
+
+            });
+
+
+
+
+
+
+
+
+
+            $('.editor').on('dblclick', function(e){
+
+                $(this).trumbowyg({
+
+                    lang: 'fr',
+
+                    closable: true,
+
+                    fixedBtnPane: true
+
+                });
+
+            });
+
+        </script>
+        
+        
+            
+      <div class="form-group">
+        <div class="label">
+          <label></label>
+        </div>
+        <div class="field">
+          <button onclick="changeText(false);" id="" class="button bg-main icon-edit" type="button"> 继续修改正文</button>
+          <button onclick="changeText(true);" id="" class="button bg-main icon-check-square-o" type="button"> 完成</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  
+  
+</div>
+
+</body>
+</html>

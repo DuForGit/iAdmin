@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit"/>
+<title></title>
+<link rel="stylesheet" href="css/pintuer.css"/>
+<link rel="stylesheet" href="css/admin.css"/>
+<script src="js/jquery.js"></script>
+<script src="js/pintuer.js"></script>
+</head>
+<body>
+<form method="post" action="" id="listform">
+  <div class="panel admin-panel">
+    <div class="panel-head">
+    	<strong class="icon-reorder"> 作者列表</strong> 
+    </div>
+    
+   
+    <table class="table table-hover text-center">
+      <tr>
+        <th>ID</th>
+        <th width="10%">名称</th>
+        <th width="30%">封面</th>
+        <th width="45%">简介</th>
+        <th width="10%">操作</th>
+      </tr>
+      
+        <tr th:each="w:${publishs.list}" >
+          <td style="text-align:left; padding-left:20px;" th:text="${w.id}" ></td>
+          <td th:text="${w.name}" >未设置</td>
+          <td width="10%"><img  width="150"  th:src="@{images/publish/} + ${w.cover}" /></td>
+          <td th:text="${w.summary}" >未设置</td>
+          <td>
+          	<div class="button-group">
+          	 <a class="button border-main"  th:href="@{pbifos?pid=} + ${w.id}">
+          	 	<span class="icon-edit"></span> 修改</a>
+           </div>
+          </td>
+        </tr>
+        
+      <tr>
+        <td colspan="8">
+        <div class="pagelist">
+        
+         <a th:if="${!publishs.isFirstPage}" th:href="@{/publishs?p=1}">首页</a> 
+         <a th:if="${publishs.hasPreviousPage}" th:href="@{/publishs?p=} + ${publishs.pageNum-1}">上一页</a> 
+         
+         
+         <b th:each="p : ${#numbers.sequence(publishs.pageNum,publishs.pages)}">
+         <span class="current"  th:if="${publishs.pageNum} == ${p}" th:text="${publishs.pageNum}" ></span>
+         <a th:if="${publishs.pageNum} != ${p} and ${p} le ${publishs.pages} and ${publishs.pageNum+9} ge ${p}" th:text="${p}" th:href="@{/publishs?p=} + ${p}"></a>
+         </b>
+         
+         
+         <a th:if="${publishs.hasNextPage}" th:href="@{/publishs?p=} + ${publishs.pageNum + 1}">下一页</a>
+         <a th:if="${!publishs.isLastPage}" th:href="@{/publishs?p=} + ${publishs.pages}">尾页</a>
+         
+          </div>
+          <div>
+          <ul> <li style="float:right;"> <a class="button border-main icon-plus-square-o" href="addpub" > 新添出版社</a> </li> </ul>
+          </div>
+          </td>
+      </tr>
+	
+    </table>
+    
+  </div>
+  
+</form>
+<script type="text/javascript">
+function deleteBooks(){
+	var ids = $("input[name='id[]']").val();
+	alert("ids: "+ids[0]);
+}
+
+
+//单个删除
+function del(id,mid,iscid){
+	if(confirm("您确定要删除吗?")){
+		
+	}
+}
+
+//全选
+$("#checkall").click(function(){ 
+  $("input[name='id[]']").each(function(){
+	  if (this.checked) {
+		  this.checked = false;
+	  }
+	  else {
+		  this.checked = true;
+	  }
+  });
+})
+
+//批量删除
+function DelSelect(){
+	var Checkbox=false;
+	 $("input[name='id[]']").each(function(){
+	  if (this.checked==true) {		
+		Checkbox=true;	
+	  }
+	});
+	if (Checkbox){
+		var t=confirm("您确认要删除选中的内容吗？");
+		if (t==false) return false;		
+		$("#listform").submit();		
+	}
+	else{
+		alert("请选择您要删除的内容!");
+		return false;
+	}
+}
+
+//批量排序
+function sorts(){
+	var Checkbox=false;
+	 $("input[name='id[]']").each(function(){
+	  if (this.checked==true) {		
+		Checkbox=true;	
+	  }
+	});
+	if (Checkbox){	
+		
+		$("#listform").submit();		
+	}
+	else{
+		alert("请选择要操作的内容!");
+		return false;
+	}
+}
+
+
+//批量首页显示
+function changeishome(o){
+	var Checkbox=false;
+	 $("input[name='id[]']").each(function(){
+	  if (this.checked==true) {		
+		Checkbox=true;	
+	  }
+	});
+	if (Checkbox){
+		
+		$("#listform").submit();	
+	}
+	else{
+		alert("请选择要操作的内容!");		
+	
+		return false;
+	}
+}
+
+//批量推荐
+function changeisvouch(o){
+	var Checkbox=false;
+	 $("input[name='id[]']").each(function(){
+	  if (this.checked==true) {		
+		Checkbox=true;	
+	  }
+	});
+	if (Checkbox){
+		
+		
+		$("#listform").submit();	
+	}
+	else{
+		alert("请选择要操作的内容!");	
+		
+		return false;
+	}
+}
+
+//批量置顶
+function changeistop(o){
+	var Checkbox=false;
+	 $("input[name='id[]']").each(function(){
+	  if (this.checked==true) {		
+		Checkbox=true;	
+	  }
+	});
+	if (Checkbox){		
+		
+		$("#listform").submit();	
+	}
+	else{
+		alert("请选择要操作的内容!");		
+	
+		return false;
+	}
+}
+
+
+//批量移动
+function changecate(o){
+	var Checkbox=false;
+	 $("input[name='id[]']").each(function(){
+	  if (this.checked==true) {		
+		Checkbox=true;	
+	  }
+	});
+	if (Checkbox){		
+		
+		$("#listform").submit();		
+	}
+	else{
+		alert("请选择要操作的内容!");
+		
+		return false;
+	}
+}
+
+//批量复制
+function changecopy(o){
+	var Checkbox=false;
+	 $("input[name='id[]']").each(function(){
+	  if (this.checked==true) {		
+		Checkbox=true;	
+	  }
+	});
+	if (Checkbox){	
+		var i = 0;
+	    $("input[name='id[]']").each(function(){
+	  		if (this.checked==true) {
+				i++;
+			}		
+	    });
+		if(i>1){ 
+	    	alert("只能选择一条信息!");
+			$(o).find("option:first").prop("selected","selected");
+		}else{
+		
+			$("#listform").submit();		
+		}	
+	}
+	else{
+		alert("请选择要复制的内容!");
+		$(o).find("option:first").prop("selected","selected");
+		return false;
+	}
+}
+
+</script>
+
+</body>
+</html>
